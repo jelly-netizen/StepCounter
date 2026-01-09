@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private TextView steps;
     private int totalSteps = 0;
-    private int initialSteps = 0;
+    private int initialSteps = -1;
     private SensorManager sensorManager = null;
     private Sensor stepSensor;
     private TextView textView;
@@ -89,7 +89,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             totalSteps = (int) event.values[0];
-            int stepsSinceReset= totalSteps -initialSteps;
+
+            if (initialSteps == -1) {
+                initialSteps = totalSteps;
+            }
+
+            int stepsSinceReset = totalSteps - initialSteps;
             steps.setText(String.valueOf(stepsSinceReset));
         }
 
