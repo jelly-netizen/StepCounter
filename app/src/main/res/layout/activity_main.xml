@@ -7,31 +7,26 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="167dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="80dp"
-        android:text="Activity"
-        android:textSize="48sp"
+        android:id="@+id/textView"
+        android:layout_width="269dp"
+        android:layout_height="121dp"
+        android:layout_marginTop="188dp"
+        android:lineSpacingExtra="34sp"
+        android:text="Steps:"
+        android:textAlignment="center"
+        android:textSize="60sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="159dp"
-        android:layout_height="84dp"
-        android:layout_marginTop="76dp"
-        android:text="Steps:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
         android:id="@+id/steps"
-        android:layout_width="152dp"
-        android:layout_height="82dp"
+        android:layout_width="267dp"
+        android:layout_height="131dp"
         android:text="0"
+        android:textAlignment="center"
+        android:textSize="96sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.486"
@@ -42,12 +37,13 @@
 
     <Button
         android:id="@+id/resestBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="287dp"
+        android:layout_height="50dp"
         android:text="Reset"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/steps" />
+        app:layout_constraintTop_toBottomOf="@+id/steps"
+        app:layout_constraintVertical_bias="0.551" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

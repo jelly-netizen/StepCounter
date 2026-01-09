@@ -43,13 +43,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         reset = findViewById(R.id.resestBtn);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        initialSteps = loadInitialSteps();
+
 
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialSteps = totalSteps;
-                steps.setText("0");
-            }
+                    initialSteps = totalSteps;
+                    saveInitialSteps(initialSteps);
+                    steps.setText("0");
+
+                }
         });
     }
 
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             if (initialSteps == -1) {
                 initialSteps = totalSteps;
+                saveInitialSteps(initialSteps);
             }
 
             int stepsSinceReset = totalSteps - initialSteps;
@@ -100,6 +105,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     }
+
+    private void saveInitialSteps(int steps) {
+        getSharedPreferences("step_prefs", MODE_PRIVATE)
+                .edit()
+                .putInt("initialSteps", steps)
+                .apply();
+    }
+
+    private int loadInitialSteps() {
+        return getSharedPreferences("step_prefs", MODE_PRIVATE)
+                .getInt("initialSteps", -1);
+    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
