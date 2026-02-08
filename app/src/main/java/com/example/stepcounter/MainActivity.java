@@ -1,20 +1,21 @@
 package com.example.stepcounter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -24,9 +25,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int initialSteps = -1;
     private SensorManager sensorManager = null;
     private Sensor stepSensor;
-    private TextView textView;
+    private static final int DAILY_STEP_GOAL = 5000;
 
-    private Button reset;
+
+    private CircularProgressIndicator progressBar;
+    private static final String PREFS = "step_prefs";
+    private static final String KEY_INITIAL_STEPS = "initialSteps";
+    private static final String KEY_LAST_RESET_DAY = "lastResetDay";
 
 
     @Override
@@ -39,18 +44,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         steps = findViewById(R.id.steps);
-        textView = findViewById(R.id.textView);
-        reset = findViewById(R.id.resestBtn);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        initialSteps = loadInitialSteps();
 
-        reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initialSteps = totalSteps;
-                steps.setText("0");
-            }
-        });
     }
 
     @Override
@@ -88,16 +85,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+
             totalSteps = (int) event.values[0];
 
-            if (initialSteps == -1) {
-                initialSteps = totalSteps;
+            SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+            int lastResetDay = prefs.getInt(KEY_LAST_RESET_DAY, -1);
+            int today = getTodayDayNumber();
+
+            if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                totalSteps = (int) event.values[0];
+
+                if (initialSteps == -1) {
+                    initialSteps = totalSteps;
+                    saveInitialSteps(initialSteps);
+                }
+
+                int stepsSinceReset = totalSteps - initialSteps;
+                steps.setText(String.valueOf(stepsSinceReset));
+
+                int progress = Math.min(stepsSinceReset, DAILY_STEP_GOAL);
+                progressBar.setProgress(progress);
             }
-
-            int stepsSinceReset = totalSteps - initialSteps;
-            steps.setText(String.valueOf(stepsSinceReset));
         }
-
 
     }
 
@@ -105,4 +114,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    private void saveInitialSteps ( int steps){
+        getSharedPreferences("step_prefs", MODE_PRIVATE)
+                .edit()
+                .putInt("initialSteps", steps)
+                .apply();
+    }
+
+    private int loadInitialSteps () {
+        return getSharedPreferences("step_prefs", MODE_PRIVATE)
+                .getInt("initialSteps", -1);
+    }
+
+    private int getTodayDayNumber () {
+        return (int) (System.currentTimeMillis() / (1000 * 60 * 60 * 24));
+    }
+
 }
