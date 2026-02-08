@@ -1,5 +1,6 @@
 package com.example.stepcounter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
@@ -28,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int DAILY_STEP_GOAL = 5000;
 
 
-    private CircularProgressIndicator progressBar;
+    private ProgressBar progressBar;
+
     private static final String PREFS = "step_prefs";
     private static final String KEY_INITIAL_STEPS = "initialSteps";
     private static final String KEY_LAST_RESET_DAY = "lastResetDay";
@@ -39,16 +42,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 100);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
+                    100
+            );
         }
 
         steps = findViewById(R.id.steps);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setMax(DAILY_STEP_GOAL);
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         initialSteps = loadInitialSteps();
-
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -84,31 +95,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+        if (event.sensor.getType() != Sensor.TYPE_STEP_COUNTER) return;
 
-            totalSteps = (int) event.values[0];
+        totalSteps = (int) event.values[0];
 
-            SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-            int lastResetDay = prefs.getInt(KEY_LAST_RESET_DAY, -1);
-            int today = getTodayDayNumber();
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        int lastResetDay = prefs.getInt(KEY_LAST_RESET_DAY, -1);
+        int today = getTodayDayNumber();
 
-            if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-                totalSteps = (int) event.values[0];
-
-                if (initialSteps == -1) {
-                    initialSteps = totalSteps;
-                    saveInitialSteps(initialSteps);
-                }
-
-                int stepsSinceReset = totalSteps - initialSteps;
-                steps.setText(String.valueOf(stepsSinceReset));
-
-                int progress = Math.min(stepsSinceReset, DAILY_STEP_GOAL);
-                progressBar.setProgress(progress);
-            }
+        // FIRST RUN or NEW DAY
+        if (initialSteps == -1 || lastResetDay != today) {
+            initialSteps = totalSteps;
+            saveInitialSteps(initialSteps);
+            saveLastResetDay(today);
         }
 
+        int stepsSinceReset = totalSteps - initialSteps;
+        steps.setText(String.valueOf(stepsSinceReset));
+
+        int progress = Math.min(stepsSinceReset, DAILY_STEP_GOAL);
+        progressBar.setProgress(progress);
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -130,5 +138,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int getTodayDayNumber () {
         return (int) (System.currentTimeMillis() / (1000 * 60 * 60 * 24));
     }
+
+    private void saveLastResetDay(int day) {
+        getSharedPreferences(PREFS, MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_LAST_RESET_DAY, day)
+                .apply();
+    }
+
 
 }
