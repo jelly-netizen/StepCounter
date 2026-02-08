@@ -7,20 +7,6 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="269dp"
-        android:layout_height="121dp"
-        android:layout_marginTop="188dp"
-        android:lineSpacingExtra="34sp"
-        android:text="Steps:"
-        android:textAlignment="center"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/steps"
         android:layout_width="267dp"
         android:layout_height="131dp"
@@ -29,21 +15,18 @@
         android:textSize="96sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.192"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="DuplicateIds" />
 
-    <Button
-        android:id="@+id/resestBtn"
-        android:layout_width="287dp"
-        android:layout_height="50dp"
-        android:text="Reset"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="405dp"
+        android:layout_height="441dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/steps"
-        app:layout_constraintVertical_bias="0.551" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
