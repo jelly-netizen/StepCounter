@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,16 +18,69 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.448"
         tools:ignore="DuplicateIds" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="405dp"
-        android:layout_height="441dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_margin="32dp"
+        android:max="5000"
+        android:progress="0"
+        android:progressDrawable="@drawable/circular_progress"
+        app:layout_constraintBottom_toTopOf="@+id/showGoalButton"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Goal input, hidden by default -->
+    <Button
+        android:id="@+id/showGoalButton"
+        android:layout_width="188dp"
+        android:layout_height="46dp"
+        android:background="@drawable/button_background"
+        android:text="Set Goal"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
+    <EditText
+        android:id="@+id/goalInput"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter Step Goal"
+        android:inputType="number"
+        android:background="@drawable/edittext_background"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="50dp"
+        app:layout_constraintTop_toBottomOf="@+id/showGoalButton"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Confirm button, hidden by default -->
+    <Button
+        android:id="@+id/setGoalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:background="@drawable/button_background"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/showGoalButton"
+        app:layout_constraintStart_toEndOf="@+id/goalInput"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
